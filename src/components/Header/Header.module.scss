@@ -1,0 +1,26 @@
+.main {
+  padding: 0 20px;
+  height: 114px;
+  width: 100vw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f1f1f1;
+
+  &__logo {
+    width: 80px;
+  }
+  &__wrapper {
+    display: flex;
+    column-gap: 20px;
+
+    a {
+      text-decoration: none;
+      cursor: pointer;
+      color: black;
+    }
+  }
+}
+
+
+

@@ -1,0 +1,32 @@
+.main {
+  padding: 100px 0 200px;
+
+  &__title {
+    font-size: 50px;
+    font-weight: 400;
+    line-height: 60px;
+    letter-spacing: 1px;
+  }
+
+  &__wrapper {
+    display: flex;
+    justify-content: space-between;
+    column-gap: 20px;
+  }
+
+  &__texts {
+    display: flex;
+    flex-direction: column;
+    row-gap: 8px;
+    max-width: 600px;
+
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+  }
+
+  &__image {
+    max-width: 300px;
+    height: 100%;
+  }
+}
