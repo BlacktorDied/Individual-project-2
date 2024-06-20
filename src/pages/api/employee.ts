@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import formidable from "formidable";
 
-import SCP from "@/entities/SCP";
+import Employee from "@/entities/Employee";
 import Facility from "@/entities/Facility";
 
 type Data = {
@@ -15,6 +15,11 @@ export const config = {
   },
 };
 
+const isValidDate = (dateString: string): boolean => {
+  const date = new Date(dateString);
+  return !isNaN(date.getTime());
+};
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
@@ -22,32 +27,33 @@ export default async function handler(
   const form = formidable();
   form.parse(req, async (err, fields) => {
     // Variables
-    const scp_id = parseInt(fields.scp_id?.[0].split("-")[1] ?? "");
-    const name = fields.name?.[0] || null;
-    const photo = fields.photo?.[0] || null;
-    const object_class = fields.object_class?.[0] || null;
-    const containment = fields.containment?.[0] || null;
+    const emp_id = parseInt(fields.emp_id?.[0] ?? "");
+    const name = fields.name?.[0];
+    const dobString = fields.dob?.[0] || null;
+    const dob = dobString && isValidDate(dobString) ? new Date(dobString) : null;
+    const sex = fields.sex?.[0] || null;
+    const position = fields.position?.[0];
     const description = fields.description?.[0] || null;
     const facility_id = parseInt(fields.facility_id?.[0] ?? "");
 
+
     // Handle POST request
     if (req.method == "POST") {
-      if (isNaN(scp_id)) {
-        return res.json({ error: "Invalid SCP ID" });
+      if (!name) {
+        return res.json({ error: "Name is required" });
       }
-      if (await SCP.getByID(scp_id)) {
-        return res.json({ error: `Item#: SCP-${scp_id} already exist` });
+      if (!position) {
+        return res.json({ error: "Position is required" });
       }
       if (isNaN(facility_id) && !Facility.getByID(facility_id)) {
         return res.json({ error: "Invalid Facility ID" });
       }
 
-      await SCP.create(
-        scp_id,
+      await Employee.create(
         name,
-        photo,
-        object_class,
-        containment,
+        dob,
+        sex,
+        position,
         description,
         facility_id
       );
@@ -56,19 +62,22 @@ export default async function handler(
 
     // Handle PATCH request
     if (req.method == "PATCH") {
-      if (isNaN(scp_id)) {
-        return res.json({ error: "Invalid SCP ID" });
+      if (!name) {
+        return res.json({ error: "Name is required" });
+      }
+      if (!position) {
+        return res.json({ error: "Position is required" });
       }
       if (isNaN(facility_id) && !Facility.getByID(facility_id)) {
         return res.json({ error: "Invalid Facility ID" });
       }
 
-      await SCP.update(
-        scp_id,
+      await Employee.update(
+        emp_id,
         name,
-        photo,
-        object_class,
-        containment,
+        dob,
+        sex,
+        position,
         description,
         facility_id
       );
@@ -77,14 +86,11 @@ export default async function handler(
 
     // Handle DELETE request
     if (req.method == "DELETE") {
-      const scp_id = parseInt(fields.scp_id?.[0] ?? "");
-      console.log(fields);
-
-      if (isNaN(scp_id)) {
-        return res.json({ error: "Invalid SCP ID" });
+      if (isNaN(emp_id)) {
+        return res.json({ error: "Invalid Employee ID" });
       }
 
-      await SCP.delete(scp_id);
+      await Employee.delete(emp_id);
       res.status(200).json({ success: true });
     }
   });

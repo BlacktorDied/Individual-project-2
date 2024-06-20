@@ -1,41 +1,43 @@
-import styles from "@/styles/SCPs.module.scss";
+import styles from "@/styles/Employees.module.scss";
 import { GetServerSideProps } from "next";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useLoggedIn } from "@/hooks";
-import Link from "next/link";
 
 import Edit from "@/icons/pencil.svg";
 import Bin from "@/icons/bin.svg";
 import Plus from "@/icons/plus.svg";
 import Close from "@/icons/close.svg";
 
-import SCP from "@/entities/SCP";
+import Employee from "@/entities/Employee";
 import Facility from "@/entities/Facility";
 
-//Get all SCPs
+// Get all Employees
 type Props = {
-  scps: string[];
+  employees: string[];
   facilities: number[];
 };
+
 export const getServerSideProps: GetServerSideProps<Props> = async () => {
-  const scps = await SCP.getAll();
+  const employees = await Employee.getAll();
   const facilities = await Facility.getAll();
 
   return {
     props: {
-      scps: scps.map((scp) => scp.serialize()),
+      employees: employees.map((employee) => employee.serialize()),
       facilities: facilities.map((facility) => facility.getId()),
     },
   };
 };
 
-export default function SCPs({ scps, facilities }: Props) {
+export default function SCPs({ employees, facilities }: Props) {
   const [addHidden, setAddHidden] = useState<boolean>(true);
   const [updateHidden, setUpdateHidden] = useState<number>();
+  const [descHidden, setDescHidden] = useState<number>();
   const [filter, setFilter] = useState<string>("");
   const [sortBy, setSort] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<string>("asc");
-  const list = scps.map(SCP.deserialize);
+
+  const list = employees.map(Employee.deserialize);
   const loggedIn = useLoggedIn();
 
   const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -50,12 +52,12 @@ export default function SCPs({ scps, facilities }: Props) {
     setSortOrder(event.target.value);
   };
 
-  // Add new SCP
-  async function handleAdd(event: React.FormEvent<HTMLFormElement>) {
+  // Add new Employee
+  const handleAdd = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
 
-    const response = await fetch("/api/scp", {
+    const response = await fetch("/api/employee", {
       method: "POST",
       body: formData,
     });
@@ -66,13 +68,13 @@ export default function SCPs({ scps, facilities }: Props) {
     } else {
       location.reload();
     }
-  }
-  // Update SCP
-  async function handleUpdate(event: React.FormEvent<HTMLFormElement>) {
+  };
+  // Update existing Employee
+  const handleUpdate = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
 
-    const response = await fetch("/api/scp", {
+    const response = await fetch("/api/employee", {
       method: "PATCH",
       body: formData,
     });
@@ -83,13 +85,13 @@ export default function SCPs({ scps, facilities }: Props) {
     } else {
       location.reload();
     }
-  }
-  // Delete SCP
-  async function handleDelete(scp_id: number) {
+  };
+  // Delete Employee
+  const handleDelete = async (emp_id: number) => {
     const formData = new FormData();
-    formData.append("scp_id", scp_id.toString());
+    formData.append("emp_id", emp_id.toString());
 
-    const response = await fetch("/api/scp", {
+    const response = await fetch("/api/employee", {
       method: "DELETE",
       body: formData,
     });
@@ -100,25 +102,30 @@ export default function SCPs({ scps, facilities }: Props) {
     } else {
       location.reload();
     }
-  }
+  };
 
-  // Page
   return (
     <section className="container">
       <div className={styles.main}>
-        <h1 className={styles.main__title}>List of all SCPs</h1>
+        <h1 className={styles.main__title}>List of all Employees</h1>
 
         <div className={styles.filterSort}>
           <label htmlFor="filter">
-            <strong>Filter by Class: </strong>
+            <strong>Filter by Position: </strong>
             <select
               className={styles.filterSort__filter}
               onChange={handleFilterChange}
             >
               <option value=""></option>
-              <option value="Safe">Safe</option>
-              <option value="Euclid">Euclid</option>
-              <option value="Keter">Keter</option>
+              <option value="AIC">AIC</option>
+              <option value="Agent">Agent</option>
+              <option value="Chief">Chief</option>
+              <option value="D-Class">D-Class</option>
+              <option value="Director">Director</option>
+              <option value="Doctor">Doctor</option>
+              <option value="Professor">Professor</option>
+              <option value="Researcher">Researcher</option>
+              <option value="Other Personnel">Other Personnel</option>
             </select>
           </label>
           <div className={styles.filterSort__sort}>
@@ -131,7 +138,9 @@ export default function SCPs({ scps, facilities }: Props) {
                 <option value=""></option>
                 <option value="id">ID</option>
                 <option value="name">Name</option>
-                <option value="class">Class</option>
+                <option value="dob">DOB</option>
+                <option value="sex">Sex</option>
+                <option value="position">Position</option>
                 <option value="facility_id">Facility</option>
               </select>
             </label>
@@ -150,49 +159,56 @@ export default function SCPs({ scps, facilities }: Props) {
 
         <div className={styles.main__cards}>
           {list
-            .filter((scp) => (filter ? scp.getObjectClass() === filter : true))
+            .filter((employee) =>
+              filter ? employee.getPosition() == filter : true
+            )
             .toSorted((a, b) => {
               switch (sortBy) {
                 case "id":
-                  return sortOrder === "asc"
+                  return sortOrder == "asc"
                     ? a.getId() - b.getId()
                     : b.getId() - a.getId();
-                case "class":
-                  return sortOrder === "asc"
-                    ? (a.getObjectClass() || "").localeCompare(
-                        b.getObjectClass() || ""
-                      )
-                    : (b.getObjectClass() || "").localeCompare(
-                        a.getObjectClass() || ""
-                      );
                 case "name":
-                  return sortOrder === "asc"
-                    ? (a.getName() || "").localeCompare(b.getName() || "")
-                    : (b.getName() || "").localeCompare(a.getName() || "");
+                  return sortOrder == "asc"
+                    ? a.getName().localeCompare(b.getName())
+                    : b.getName().localeCompare(a.getName());
+                case "sex":
+                  return sortOrder == "asc"
+                    ? (a.getSex() ?? "").localeCompare(b.getSex() ?? "")
+                    : (b.getSex() ?? "").localeCompare(a.getSex() ?? "");
+                case "position":
+                  return sortOrder == "asc"
+                    ? a.getPosition().localeCompare(b.getPosition())
+                    : b.getPosition().localeCompare(a.getPosition());
                 case "facility_id":
-                  return sortOrder === "asc"
+                  return sortOrder == "asc"
                     ? a.getFacilityId() - b.getFacilityId()
                     : b.getFacilityId() - a.getFacilityId();
+                case "dob":
+                  return sortOrder == "asc"
+                    ? (a.getDOB()?.getTime() ?? 0) -
+                        (b.getDOB()?.getTime() ?? 0)
+                    : (b.getDOB()?.getTime() ?? 0) -
+                        (a.getDOB()?.getTime() ?? 0);
                 default:
                   return 0;
               }
             })
-            .map((scp) => (
-              <div className={styles.card__wrapper} key={scp.getId()}>
-                {updateHidden == scp.getId() ? (
+            .map((employee) => (
+              <div key={employee.getId()}>
+                {updateHidden == employee.getId() ? (
                   <div className={styles.form__wrapper}>
                     <Close
                       className={styles.form__close}
                       onClick={() => setUpdateHidden(undefined)}
                     />
                     <form className={styles.form} onSubmit={handleUpdate}>
-                      <label htmlFor="scp_id">
-                        <strong>Item#: </strong>SCP-{scp.formatedId()}
+                      <label htmlFor="emp_id">
                         <input
                           type="hidden"
-                          name="scp_id"
-                          id="scp_id"
-                          value={`SCP-${scp.formatedId()}`}
+                          name="emp_id"
+                          id="emp_id"
+                          value={employee.getId()}
                         />
                       </label>
 
@@ -202,32 +218,48 @@ export default function SCPs({ scps, facilities }: Props) {
                           type="text"
                           name="name"
                           id="name"
-                          defaultValue={scp.getName() ?? undefined}
+                          defaultValue={employee.getName()}
+                          required
                         />
                       </label>
 
-                      <label htmlFor="object_class">
-                        <strong>Class: </strong>
+                      <label htmlFor="dob">
+                        <strong>Date of Birth: </strong>
+                        <input
+                          type="date"
+                          name="dob"
+                          id="dob"
+                          defaultValue={
+                            employee.getDOB()
+                              ? new Date(employee.getDOB() ?? "").toISOString().split('T')[0]
+                              : undefined
+                          }
+                        />
+                      </label>
+
+                      <label htmlFor="sex">
+                        <strong>Sex: </strong>
                         <select
-                          name="object_class"
-                          id="object_class"
-                          defaultValue={scp.getObjectClass() ?? undefined}
+                          name="sex"
+                          id="sex"
+                          defaultValue={employee.getSex() ?? undefined}
                         >
                           <option value=""></option>
-                          <option value="Safe">Safe</option>
-                          <option value="Euclid">Euclid</option>
-                          <option value="Keter">Keter</option>
+                          <option value="Male">Male</option>
+                          <option value="Female">Female</option>
                         </select>
                       </label>
 
-                      <label htmlFor="containment">
-                        <strong>Containment Procedures: </strong>
+                      <label htmlFor="position">
+                        <strong>Position: </strong>
+                        <input
+                          type="text"
+                          name="position"
+                          id="position"
+                          defaultValue={employee.getPosition()}
+                          required
+                        />
                       </label>
-                      <textarea
-                        name="containment"
-                        id="containment"
-                        defaultValue={scp.getContainment() ?? undefined}
-                      />
 
                       <label htmlFor="description">
                         <strong>Description: </strong>
@@ -235,18 +267,7 @@ export default function SCPs({ scps, facilities }: Props) {
                       <textarea
                         name="description"
                         id="description"
-                        defaultValue={scp.getDescription() ?? undefined}
-                      />
-
-                      <label htmlFor="photo">
-                        <strong>SCP Photo (URL): </strong>
-                      </label>
-                      <input
-                        type="text"
-                        name="photo"
-                        id="photo"
-                        defaultValue={scp.getPhoto() ?? undefined}
-                        placeholder="https://example.com/image.png"
+                        defaultValue={employee.getDescription() ?? undefined}
                       />
 
                       <label
@@ -257,7 +278,7 @@ export default function SCPs({ scps, facilities }: Props) {
                         <select
                           name="facility_id"
                           id="facility_id"
-                          defaultValue={scp.getFacilityId()}
+                          defaultValue={employee.getFacilityId()}
                           required
                         >
                           <option value=""></option>
@@ -275,51 +296,64 @@ export default function SCPs({ scps, facilities }: Props) {
                 ) : (
                   <div className={styles.card}>
                     <div className={styles.card__top}>
-                      <div title={!loggedIn ? "Log in to edit" : "Edit SCP"}>
+                      <div
+                        title={!loggedIn ? "Log in to edit" : "Edit Employee"}
+                      >
                         <Edit
                           className={`${styles.card__topEdit} ${
                             !loggedIn && styles.card__topEdit_disabled
                           }`}
                           onClick={() =>
-                            loggedIn && setUpdateHidden(scp.getId())
+                            loggedIn && setUpdateHidden(employee.getId())
                           }
                         />
                       </div>
                       <div
-                        title={!loggedIn ? "Log in to delete" : "Delete SCP"}
+                        title={
+                          !loggedIn ? "Log in to delete" : "Delete Employee"
+                        }
                       >
                         <Bin
                           className={`${styles.card__topDelete} ${
                             !loggedIn && styles.card__topDelete_disabled
                           }`}
-                          onClick={() => loggedIn && handleDelete(scp.getId())}
+                          onClick={() =>
+                            loggedIn && handleDelete(employee.getId())
+                          }
                         />
                       </div>
                     </div>
-                    <Link
-                      className={styles.card__bottom}
-                      href={`/scp-${scp.formatedId()}`}
-                    >
+                    <div className={styles.card__bottom}>
                       <div className={styles.card__bottomTexts}>
-                        <h2 className={styles.card__bottomId}>
-                          <strong>Item#: </strong>SCP-
-                          {scp.formatedId()}
+                        <h2 className={styles.card__bottomTitle}>
+                          <strong>
+                            {employee.getPosition()} {employee.getName()}:{" "}
+                          </strong>
+                          {employee.getDescription()}
                         </h2>
-                        <p className={styles.card__bottomName}>
-                          <strong>Name: </strong>
-                          {scp.getName()}
+                        <br />
+                        <p className={styles.card__bottomDOB}>
+                          <strong>Date of Birth: </strong>
+                          {employee.getDOB()
+                            ? new Date(
+                                employee.getDOB() ?? ""
+                              ).toLocaleDateString("en-US", {
+                                year: "numeric",
+                                month: "2-digit",
+                                day: "2-digit",
+                              })
+                            : undefined}
                         </p>
-                        <p className={styles.card__bottomClass}>
-                          <strong>Class: </strong>
-                          {scp.getObjectClass()}
+                        <p className={styles.card__bottomSex}>
+                          <strong>Sex: </strong>
+                          {employee.getSex() ?? undefined}
+                        </p>
+                        <p className={styles.card__bottomFacility}>
+                          <strong>Facility: </strong>SITE-
+                          {employee.getFacilityId().toString().padStart(2, "0")}
                         </p>
                       </div>
-                      <img
-                        className={styles.card__bottomImage}
-                        src={scp.getPhoto() ?? "/img/no-image.png"}
-                        alt={"SCP-" + scp.formatedId() + " photo"}
-                      />
-                    </Link>
+                    </div>
                   </div>
                 )}
               </div>
@@ -339,52 +373,41 @@ export default function SCPs({ scps, facilities }: Props) {
                   onClick={() => setAddHidden(true)}
                 />
                 <form className={styles.form} onSubmit={handleAdd}>
-                  <label className={styles.form__requried} htmlFor="scp_id">
-                    <strong>Item#: </strong>
-                    <input
-                      type="text"
-                      name="scp_id"
-                      id="scp_id"
-                      placeholder="SCP-001"
-                      required
-                    />
-                  </label>
-
-                  <label htmlFor="name">
+                  <label htmlFor="name" className={styles.form__requried}>
                     <strong>Name: </strong>
-                    <input type="text" name="name" id="name" />
+                    <input type="text" name="name" id="name" required />
                   </label>
-
-                  <label htmlFor="object_class">
-                    <strong>Class: </strong>
-                    <select name="object_class" id="object_class">
+                  <label htmlFor="dob">
+                    <strong>Date of Birth: </strong>
+                    <input type="date" name="dob" id="dob" />
+                  </label>
+                  <label htmlFor="sex">
+                    <strong>Sex: </strong>
+                    <select name="sex" id="sex">
                       <option value=""></option>
-                      <option value="Safe">Safe</option>
-                      <option value="Euclid">Euclid</option>
-                      <option value="Keter">Keter</option>
+                      <option value="Female">Female</option>
+                      <option value="Male">Male</option>
                     </select>
                   </label>
-
-                  <label htmlFor="containment">
-                    <strong>Containment Procedures: </strong>
+                  <label htmlFor="position" className={styles.form__requried}>
+                    <strong>Position: </strong>
+                    <select name="position" id="position" required>
+                      <option value=""></option>
+                      <option value="AIC">AIC</option>
+                      <option value="Agent">Agent</option>
+                      <option value="Chief">Chief</option>
+                      <option value="D-Class">D-Class</option>
+                      <option value="Director">Director</option>
+                      <option value="Doctor">Doctor</option>
+                      <option value="Professor">Professor</option>
+                      <option value="Researcher">Researcher</option>
+                      <option value="Other Personnel">Other Personnel</option>
+                    </select>
                   </label>
-                  <textarea name="containment" id="containment" />
-
                   <label htmlFor="description">
                     <strong>Description: </strong>
                   </label>
                   <textarea name="description" id="description" />
-
-                  <label htmlFor="photo">
-                    <strong>SCP Photo: </strong>
-                  </label>
-                  <input
-                    type="text"
-                    name="photo"
-                    id="photo"
-                    placeholder="https://example.com/image.png"
-                  />
-
                   <label
                     className={styles.form__requried}
                     htmlFor="facility_id"

@@ -1,6 +1,5 @@
 .main {
-  padding: 0 20px;
-  height: 114px;
+  padding: 20px 20px;
   width: 100vw;
   display: flex;
   justify-content: space-between;
@@ -12,6 +11,7 @@
   }
   &__wrapper {
     display: flex;
+    align-items: center;
     column-gap: 20px;
 
     a {
@@ -20,7 +20,136 @@
       color: black;
     }
   }
+
+  &__logIn,
+  &__logOut {
+        padding: 8px;
+        background-color: #000;
+        color: #fff;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        &:hover {
+            background-color: #5c5c5c;
+        }
+  }
+
+  @media (max-width: 1023px) {
+    padding: 16px 16px;
+    column-gap: 24px;
+
+    &__logo {
+      width: 40px;
+    }
+    &__wrapper {
+      justify-content: end;
+      flex-wrap: wrap;
+      column-gap: 8px;
+      row-gap: 8px;
+
+      font-size: 14px;
+      line-height: 1.56;
+    }
+
+    &__logIn,
+    &__logOut {
+      border-radius: 8px;
+    }
+  }
 }
 
+.form {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  transform: translate(-50%, -50%);
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
+  background-color: rgb(#000, 0.9);
+  z-index: 2;
 
+  &__close {
+    display: block;
+    margin-left:auto;
+    width: 24px;
+    opacity: 0.5;
+    transition: all 0.3s ease;
+
+    &:hover {
+        opacity: 1;
+        transform: scale(1.1);
+
+        path {
+            fill: red;
+        }
+    }
+  }
+
+  input {
+    padding: 8px;
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid #000;
+
+    &:after {
+      content: "*";
+      color: red;
+    }
+  }
+
+  button {
+    width: 100px;
+    padding: 12px;
+    background-color: #000;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+        background-color: #5c5c5c;
+    }
+  }
+
+  &__logIn,
+  &__signUp {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 20px;
+    padding: 20px;
+    width: 300px;
+    background-color: #fff;
+    border-radius: 8px;
+  }
+
+  &__options {
+    display: flex;
+    align-items: center;
+    column-gap: 20px;
+
+    & > div {
+      width: 100px;
+      padding: 12px;
+      color: #000;
+      text-align: center;
+      background-color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background-color: #5c55c5;
+        color: #fff;
+      }
+    }
+  }
+}

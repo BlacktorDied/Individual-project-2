@@ -1,19 +1,30 @@
 .main {
-    padding: 100px 0 200px;
-    max-width: 638px;
+  padding-top: 100px;
+  max-width: 638px;
+
+  &__title {
+    font-size: 76px;
+    line-height: 1.2;
+    letter-spacing: 1.5px;
+  }
+  &__text1,
+  &__text2 {
+    margin-top: 24px;
+    font-size: 21px;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 1023px) {
+    padding-top: 50px;
 
     &__title {
-        font-size: 76px;
-        font-weight: 400;
-        line-height: 1.2;
-        letter-spacing: 1.5px;
+      font-size: 40px;
+      line-height: 1.2;
+      letter-spacing: 1.2px;
     }
     &__text1,
     &__text2 {
-        margin-top: 24px;
-        font-size: 21px;
-        font-weight: 400;
-        line-height: 1.5;
+      font-size: 16px;
     }
+  }
 }
-

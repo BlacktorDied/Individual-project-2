@@ -2,6 +2,17 @@ import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 async function main() {
+    // Users
+    const admin = await prisma.user.upsert({
+        where: { username: 'admin' },
+        update: {},
+        create: {
+            username: 'admin',
+            password: 'admin',
+        }
+    })
+
+    // Facilitites
     const facility_1 = await prisma.facility.upsert({
         where: { facility_id: 1},
         update: {},
@@ -13,19 +24,17 @@ async function main() {
             description: 'Site-01, also known as Overwatch HQ, is a safe zone that acts as a data backup for all major Foundation facilities worldwide, as well as a secure meeting facility for O5 Council members and other high-ranking Foundation personnel. All further details, including the location of Site-01, are strictly classified.',
         }
     })
-
-    const facility_12 = await prisma.facility.upsert({
-        where: { facility_id: 12},
+    const facility_43 = await prisma.facility.upsert({
+        where: { facility_id: 43},
         update: {},
         create: {
-            facility_id: 12,
-            logo: 'https://scp-wiki.wdfiles.com/local--files/secure-facilities-locations/Site-12.svg',
+            facility_id: 43,
+            logo: 'https://scp-wiki.wdfiles.com/local--files/on-guard-43-hub/LHR2.png',
             type: 'Research and Containment',
-            location: 'Devon, England, UK',
-            description: 'Site-12 is situated underneath the Avon Dam, within the Dartmoor National Park. One of the first sites to be commissioned after the Foundation formation, Site-12 focuses primarily on research and administration, and is one of the most important sites in the British Isles. The site more prominent feature is its library, which hold the largest collection of anomalous history and documentation within the Foundation. As a result, numerous research departments have taken residence there, including the Department of History, who use the site as their headquarters.',
+            location: 'Ipperwash Provincial Park, Ontario, Canada',
+            description: 'Site-43 is situated one kilometre below sea level on the southeastern shore of Lake Huron, a Nexus of anomalous activity. The Site takes an unconventional approach to the containment of its low- to medium-risk anomalies, and also possesses research divisions arranged in a pseudoacademic structure and abatement refineries for esoteric substances.',
         }
     })
-
     const facility_98 = await prisma.facility.upsert({
         where: { facility_id: 98},
         update: {},
@@ -38,6 +47,7 @@ async function main() {
         }
     })
 
+    // SCPs
     const scp_049 = await prisma.sCP.upsert({
         where: { scp_id: 49},
         update: {},
@@ -75,6 +85,47 @@ async function main() {
             containment: 'SCP-087 is located on the campus of [REDACTED]. The doorway leading to SCP-087 is constructed of reinforced steel with an electro-release lock mechanism. It has been disguised to resemble a janitorial closet consistent with the design of the building. The lock mechanism on the doorknob will not release unless ██ volts are applied in conjunction with counter-clockwise rotation of the key. The inside of the door is lined with 6 centimeters of industrial foam padding.',
             description: 'SCP-087 is an unlit platform staircase. Stairs descend on a 38 degree angle for 13 steps before reaching a semicircular platform of approximately 3 meters in diameter. Descent direction rotates 180 degrees at each platform. The design of SCP-087 limits subjects to a visual range of approximately 1.5 flights. A light source is required for any subjects exploring SCP-087, as there are no lighting fixtures or windows present. Lighting sources brighter than 75 watts have shown to be ineffective, as SCP-087 seems to absorb excess light.',
             facility_id: 1,
+        }
+    })
+
+    // Employees
+    const employee_1 = await prisma.employee.upsert({
+        where: { emp_id: 1},
+        update: {},
+        create: {
+            emp_id: 1,
+            name: 'Daniel Asheworth',
+            dob: new Date('1950-01-01'),
+            sex: 'Male',
+            position: 'Doctor',
+            description: "Thaumaturgist and self-proclaimed alchemist. Hot-headed, short-tempered, and sometimes arrogant, but with a good heart. Born from an unknown American mother and an unknown Polish father in the late 1950s. One of few people in the Foundation capable of prolonging their youth through anomalous means.",
+            facility_id: 1,
+        }
+    })
+    const employee_2 = await prisma.employee.upsert({
+        where: { emp_id: 2},
+        update: {},
+        create: {
+            emp_id: 2,
+            name: 'Anders Bjornsen',
+            dob: null,
+            sex: 'Male',
+            position: 'Professor',
+            description: "Field researcher specializing in anomalous psychologies and societal abnormalities, working as an SCP Analyst for the Psychology Department. Previously assigned to the Memetics Department, Theology & Theometrics Department, and Cognitohazard Research Department. Respected for remaining calm during multiple containment breaches.",
+            facility_id: 1,
+        }
+    })
+    const employee_3 = await prisma.employee.upsert({
+        where: { emp_id: 3},
+        update: {},
+        create: {
+            emp_id: 3,
+            name: 'Delfina Ibanez',
+            dob: null,
+            sex: 'Female',
+            position: 'Chief',
+            description: "The diminutive, no-nonsense Chief of Site-43's Pursuit and Suppression Section, which coordinates all of the Facility's Mobile Task Forces. Known for leading by example, Ibanez struggles to delegate, and often ends up in harm's way despite the seniority of her position.",
+            facility_id: 43,
         }
     })
 }

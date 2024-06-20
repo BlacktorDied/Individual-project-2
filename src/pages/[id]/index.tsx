@@ -45,7 +45,7 @@ export default function Index({scp}:Props) {
                         <p className={styles.main__description}><strong>Description: </strong>{lol.getDescription()}</p>
                         <p className={styles.main__facility}><strong>Facility: </strong>{`SITE-${lol.getFacilityId().toString().padStart(2, '0')}`}</p>
                     </div>
-                    <img className={styles.main__image} src={lol.getPhoto()} alt={lol.getName()}/>
+                    <img className={styles.main__image} src={lol.getPhoto() ?? undefined} alt={lol.getName() ?? undefined}/>
                 </div>
             </div>
         </section>
