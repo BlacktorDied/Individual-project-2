@@ -20,12 +20,9 @@ const isValidDate = (dateString: string): boolean => {
   return !isNaN(date.getTime());
 };
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<Data>
-) {
-  const form = formidable();
-  form.parse(req, async (err, fields) => {
+export const parseFields =
+  (req: NextApiRequest, res: NextApiResponse<Data>) =>
+  async (err: any, fields: formidable.Fields<string>) => {
     // Variables
     const emp_id = parseInt(fields.emp_id?.[0] ?? "");
     const name = fields.name?.[0];
@@ -45,7 +42,7 @@ export default async function handler(
       if (!position) {
         return res.json({ error: "Position is required" });
       }
-      if (isNaN(facility_id) && !Facility.getByID(facility_id)) {
+      if (isNaN(facility_id) || await Facility.getByID(facility_id) === null) {
         return res.json({ error: "Invalid Facility ID" });
       }
 
@@ -93,5 +90,12 @@ export default async function handler(
       await Employee.delete(emp_id);
       res.status(200).json({ success: true });
     }
-  });
+  };
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<Data>
+) {
+  const form = formidable();
+  form.parse(req, parseFields(req, res));
 }

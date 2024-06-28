@@ -29,4 +29,26 @@
     max-width: 300px;
     height: 100%;
   }
+
+  @media (max-width: 1023px) {
+    padding: 50px 0 100px;
+
+    &__title {
+      font-size: 40px;
+      line-height: 50px;
+    }
+
+    &__wrapper {
+      flex-direction: column;
+      row-gap: 20px;
+    }
+
+    &__texts {
+      max-width: 100%;
+    }
+
+    &__image {
+      max-width: 200px;
+    }
+  }
 }

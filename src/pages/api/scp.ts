@@ -15,12 +15,9 @@ export const config = {
   },
 };
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<Data>
-) {
-  const form = formidable();
-  form.parse(req, async (err, fields) => {
+export const parseFields =
+  (req: NextApiRequest, res: NextApiResponse<Data>) =>
+  async (err: any, fields: formidable.Fields<string>) => {
     // Variables
     const scp_id = parseInt(fields.scp_id?.[0].split("-")[1] ?? "");
     const name = fields.name?.[0] || null;
@@ -38,10 +35,9 @@ export default async function handler(
       if (await SCP.getByID(scp_id)) {
         return res.json({ error: `Item#: SCP-${scp_id} already exist` });
       }
-      if (isNaN(facility_id) && !Facility.getByID(facility_id)) {
+      if (isNaN(facility_id) || await Facility.getByID(facility_id) === null) {
         return res.json({ error: "Invalid Facility ID" });
       }
-
       await SCP.create(
         scp_id,
         name,
@@ -78,7 +74,6 @@ export default async function handler(
     // Handle DELETE request
     if (req.method == "DELETE") {
       const scp_id = parseInt(fields.scp_id?.[0] ?? "");
-      console.log(fields);
 
       if (isNaN(scp_id)) {
         return res.json({ error: "Invalid SCP ID" });
@@ -87,5 +82,12 @@ export default async function handler(
       await SCP.delete(scp_id);
       res.status(200).json({ success: true });
     }
-  });
+  };
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<Data>
+) {
+  const form = formidable();
+  form.parse(req, parseFields(req, res));
 }

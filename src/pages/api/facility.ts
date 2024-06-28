@@ -14,12 +14,9 @@ export const config = {
   },
 };
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<Data>
-) {
-  const form = formidable();
-  form.parse(req, async (err, fields) => {
+export const parseFields =
+  (req: NextApiRequest, res: NextApiResponse<Data>) =>
+  async (err: any, fields: formidable.Fields<string>) => {
     // Variables
     const facility_id = parseInt(fields.facility_id?.[0].split("-")[1] ?? "");
     const logo = fields.logo?.[0];
@@ -67,5 +64,12 @@ export default async function handler(
       await Facility.delete(facility_id);
       res.status(200).json({ success: true });
     }
-  });
+  };
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<Data>
+) {
+  const form = formidable();
+  form.parse(req, parseFields(req, res));
 }
