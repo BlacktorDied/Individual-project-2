@@ -1,6 +1,8 @@
 # About
 This web application is created as a task in TSI on subject Individual-Project-2. The main goal of this task was to implement OOP knowladge in creating a web application. This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+---
+
 # Prerequisites
 ## Node.js
 Ensure that you have installed **Node.js** on your local machine. To check this, you need to open **Command Prompt**.
@@ -20,8 +22,10 @@ Ensure that you have installed **Git** on your local machine. To check this, you
 
 _If you have installed Git, you will get its version (e.g. git version 2.45.2.windows.1). Otherwise, follow the link to install Git v2.45.2._ [Git (git-scm.com)](https://git-scm.com/)
 
+---
+
 # Getting Started
-## Step 1 - Clone the Repository
+## 1. Clone the Repository
 First, run the development server:
 1. Press: **Win+R**
 2. In opened window enter: **cmd**
@@ -30,24 +34,26 @@ First, run the development server:
   - Navigate to the willing directory (e.g. Downloads): `cd download`
   - Clone the repository by running this command: `git clone https://github.com/BlacktorDied/Individual-project-2.git`
 
-## Step 2 - Navigate to the Project Directory
+## 2. Navigate to the Project Directory
 ```Bash
 cd individual-project-2
 ```
 
-## Step 3 - Install Dependencies
+## 3. Install Dependencies
 ```Bash
 npm install
 ```
 
-## Step 4 - Start the development
+## 4. Start the development
 ```Bash
 npm run dev
 ```
 _To kill the process (stop server) press **ctrl + c** in Command Prompt._
 
-## Step 5 - Open the Application in your Browser
+## 5. Open the Application in your Browser
 Open http://localhost:3000 with your browser to see the result.
+
+---
 
 # Learn More
 To learn more about Next.js, take a look at the following resources:
