@@ -1,5 +1,7 @@
 # About
-This web application is created as a task in TSI on subject Individual-Project-2. The main goal of this task was to implement OOP knowladge in creating a web application. This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+This web application is created as a task in TSI on subject Individual-Project-2. The main goal of this task was to implement OOP knowladge in creating a web application. 
+
+This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ---
 
