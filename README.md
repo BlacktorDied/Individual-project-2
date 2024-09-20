@@ -1,5 +1,5 @@
 # Individual Project 2
-This web application is created as a task in TSI on subject Individual-Project-2. The main goal of this task was to implement OOP knowladge in creating a web application. 
+This web application was created as a task in TSI for the subject Individual Project 2. The main goal of this task was to implement OOP knowledge in creating a web application.
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
